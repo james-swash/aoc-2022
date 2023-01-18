@@ -4,8 +4,7 @@ fn part_one(input: &str) -> usize {
         .map(|line| {
             line[0..line.len() / 2]
                 .chars()
-                .filter_map(|x| line[line.len() / 2..].chars().find(|z| *z == x))
-                .next()
+                .find_map(|x| line[line.len() / 2..].chars().find(|z| *z == x))
                 .unwrap()
         })
         .map(|chr| {
