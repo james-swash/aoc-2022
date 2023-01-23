@@ -21,15 +21,13 @@ fn part_two(input: &str) -> usize {
     let mut tmp: Vec<usize> = Vec::with_capacity(chunks.len());
     for chunk in chunks {
         for a in chunk[0].chars() {
-            if chunk[1].chars().any(|b| b == a) {
-                if let Some(c) = chunk[2].chars().find(|c| *c == a) {
-                    if c.is_uppercase() {
-                        tmp.push(c as usize - 38);
-                    } else {
-                        tmp.push(c as usize - 96);
-                    }
-                    break;
+            if chunk[1].chars().any(|b| b == a) && chunk[2].chars().any(|c| c == a) {
+                if a.is_uppercase() {
+                    tmp.push(a as usize - 38);
+                } else {
+                    tmp.push(a as usize - 96);
                 }
+                break;
             }
         }
     }

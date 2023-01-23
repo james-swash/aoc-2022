@@ -4,63 +4,63 @@ use std::convert::From;
 use std::str::FromStr;
 
 #[derive(Eq, PartialEq, PartialOrd, Clone)]
-enum RPS {
+enum Game {
     Rock,
     Paper,
     Scissors,
 }
-fn parse_rps(c: &str) -> Result<RPS, &'static str> {
+fn parse_game(c: &str) -> Result<Game, &'static str> {
     match c {
-        "A" | "X" => Ok(RPS::Rock),
-        "B" | "Y" => Ok(RPS::Paper),
-        "C" | "Z" => Ok(RPS::Scissors),
+        "A" | "X" => Ok(Game::Rock),
+        "B" | "Y" => Ok(Game::Paper),
+        "C" | "Z" => Ok(Game::Scissors),
         _ => Err("Unexpected character encountered"),
     }
 }
 
-impl From<RPS> for usize {
-    fn from(value: RPS) -> Self {
+impl From<Game> for usize {
+    fn from(value: Game) -> Self {
         match value {
-            RPS::Rock => 1,
-            RPS::Paper => 2,
-            RPS::Scissors => 3,
+            Game::Rock => 1,
+            Game::Paper => 2,
+            Game::Scissors => 3,
         }
     }
 }
 
-impl Ord for RPS {
+impl Ord for Game {
     fn cmp(&self, other: &Self) -> Ordering {
         if self == other {
             return Ordering::Equal;
         }
 
         match self {
-            RPS::Rock => match other {
-                RPS::Paper => Ordering::Less,
-                RPS::Scissors => Ordering::Greater,
+            Game::Rock => match other {
+                Game::Paper => Ordering::Less,
+                Game::Scissors => Ordering::Greater,
                 _ => Ordering::Equal,
             },
-            RPS::Paper => match other {
-                RPS::Rock => Ordering::Greater,
-                RPS::Scissors => Ordering::Less,
+            Game::Paper => match other {
+                Game::Rock => Ordering::Greater,
+                Game::Scissors => Ordering::Less,
                 _ => Ordering::Equal,
             },
-            RPS::Scissors => match other {
-                RPS::Rock => Ordering::Less,
-                RPS::Paper => Ordering::Greater,
+            Game::Scissors => match other {
+                Game::Rock => Ordering::Less,
+                Game::Paper => Ordering::Greater,
                 _ => Ordering::Equal,
             },
         }
     }
 }
-struct Match(RPS, RPS);
+struct Match(Game, Game);
 
 impl FromStr for Match {
     type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let f: Vec<&str> = s.split(' ').collect();
-        return Ok(Match(parse_rps(f[0]).unwrap(), parse_rps(f[1]).unwrap()));
+        return Ok(Match(parse_game(f[0]).unwrap(), parse_game(f[1]).unwrap()));
     }
 }
 fn part_one(input: &str) -> usize {
@@ -106,17 +106,17 @@ impl From<&Outcome> for usize {
     }
 }
 
-fn workout_move(opponent_move: &RPS, outcome: &Outcome) -> RPS {
+fn workout_move(opponent_move: &Game, outcome: &Outcome) -> Game {
     match outcome {
         Outcome::Win => match opponent_move {
-            RPS::Rock => RPS::Paper,
-            RPS::Paper => RPS::Scissors,
-            RPS::Scissors => RPS::Rock,
+            Game::Rock => Game::Paper,
+            Game::Paper => Game::Scissors,
+            Game::Scissors => Game::Rock,
         },
         Outcome::Lose => match opponent_move {
-            RPS::Rock => RPS::Scissors,
-            RPS::Paper => RPS::Rock,
-            RPS::Scissors => RPS::Paper,
+            Game::Rock => Game::Scissors,
+            Game::Paper => Game::Rock,
+            Game::Scissors => Game::Paper,
         },
         Outcome::Draw => opponent_move.clone(),
     }
@@ -126,7 +126,7 @@ fn part_two(input: &str) -> usize {
     let mut total_score = 0;
     for line in input.lines() {
         let codes = line.split(' ').collect::<Vec<&str>>();
-        let opponent_move = parse_rps(codes[0]).unwrap();
+        let opponent_move = parse_game(codes[0]).unwrap();
         let outcome: Outcome = codes[1].parse().unwrap();
         let my_move = workout_move(&opponent_move, &outcome);
         let my_score: usize = my_move.into();
